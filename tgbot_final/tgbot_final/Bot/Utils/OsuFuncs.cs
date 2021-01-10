@@ -23,8 +23,6 @@ namespace tgbot_final.Bot.Utils
                 try
                 {
                     //Console.WriteLine($"isTimerWorking: {BotMain.isTimerWorking}");
-                    if (BotMain.isTimerWorking) continue;
-                    BotMain.isTimerWorking = true;
                     //Console.WriteLine("timed");
                     for (int i = 0; i <= BotMain.osuUserTGs.Count - 1; i++)
                     {
@@ -85,8 +83,7 @@ namespace tgbot_final.Bot.Utils
                 {
                     Other.OnReceivedError(ex, null, "");
                 }
-                Console.WriteLine("[Timer] end of timer");
-                BotMain.isTimerWorking = false;
+                //Console.WriteLine("[Timer] end of timer");
             }
 
         }

@@ -20,7 +20,6 @@ namespace tgbot_final.Bot
         public static List<OsuUserTG> osuUserTGs = new List<OsuUserTG>();
         public static List<User> users = new List<User>();
         public static List<Group> groups = new List<Group>();
-        public static bool isTimerWorking = false;
         public static string osuToken = "67368ae869a6b45f012b6a7a8536ee65226ad257";
         [DllImport("Kernel32")]
         public static extern bool SetConsoleCtrlHandler(HandlerRoutine Handler, bool Add);
