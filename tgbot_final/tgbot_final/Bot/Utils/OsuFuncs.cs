@@ -16,76 +16,77 @@ namespace tgbot_final.Bot.Utils
 {
     class OsuFuncs
     {
-        public static void notifyFunc()
+        public static async void notifyFunc()
         {
-            while (true)
+            await Task.Run(() =>
             {
-                try
+                while (true)
                 {
-                    //Console.WriteLine($"isTimerWorking: {BotMain.isTimerWorking}");
-                    //Console.WriteLine("timed");
-                    for (int i = 0; i <= BotMain.osuUserTGs.Count - 1; i++)
+                    try
                     {
-                        //Console.WriteLine($"[Timer] {BotMain.osuUserTGs[i].name}");
-                        osuApi osuApi = new osuApi(BotMain.osuToken);
-                        Score[] recentScores = osuApi.GetRecentScoresByNameAsync(BotMain.osuUserTGs[i].name, 100).Result;
-                        //Console.WriteLine($"[Timer] osuApi + recentscores ({osuUserTGs[i].name})");
-                        if (recentScores == null)
+                        //Console.WriteLine($"isTimerWorking: {BotMain.isTimerWorking}");
+                        //Console.WriteLine("timed");
+                        for (int i = 0; i <= BotMain.osuUserTGs.Count - 1; i++)
                         {
-                            continue;
-                        }
-                        int start = recentScores.Length - 1;
-                        bool startgot = false;
-                        for (int q = recentScores.Length - 1; q >= 0; q--)
-                        {
-                            if (DateTimeOffset.Parse(recentScores[q].date) > BotMain.osuUserTGs[i].lastCheckedScore)
+                            //Console.WriteLine($"[Timer] {BotMain.osuUserTGs[i].name}");
+                            osuApi osuApi = new osuApi(BotMain.osuToken);
+                            Score[] recentScores = osuApi.GetRecentScoresByNameAsync(BotMain.osuUserTGs[i].name, 100).Result;
+                            //Console.WriteLine($"[Timer] osuApi + recentscores ({osuUserTGs[i].name})");
+                            if (recentScores == null)
                             {
-                                start = q;
-                                startgot = true;
-                                break;
+                                continue;
                             }
-                        }
-                        //Console.WriteLine($"[Timer] get start var ({osuUserTGs[i].name})");
-                        if (!startgot) continue;
-                        for (int j = start; j >= 0; j--)
-                        {
-                            double accuracy = (50 * double.Parse(recentScores[j].count50) + 100 * double.Parse(recentScores[j].count100) + 300 * double.Parse(recentScores[j].count300)) / (300 * (double.Parse(recentScores[j].countmiss) + double.Parse(recentScores[j].count50) + double.Parse(recentScores[j].count100) + double.Parse(recentScores[j].count300))) * 100;
-                            Beatmap beatmap = osuApi.GetBeatmapByBeatmapIdAsync(int.Parse(recentScores[j].beatmap_id)).Result;
-                            if (beatmap == null) continue;
-                            //Console.WriteLine($"[Timer] getting pp ({osuUserTGs[i].name})");
-                            double curpp = Other.ppCalc(beatmap, accuracy, (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods)), int.Parse(recentScores[j].countmiss), int.Parse(recentScores[j].maxcombo));
-                            double ifFCpp = Other.ppCalc(beatmap, accuracy, (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods)), 0, int.Parse(beatmap.max_combo));
-                            //Console.WriteLine($"[Timer] got pp ({osuUserTGs[i].name})");
-                            //Console.WriteLine($"{osuUserTGs[i].name} {curpp} {ifFCpp}");
-                            Mods mods = (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods));
-                            if (curpp > 200 && recentScores[j].rank != "F")
+                            int start = recentScores.Length - 1;
+                            bool startgot = false;
+                            for (int q = recentScores.Length - 1; q >= 0; q--)
                             {
-
-                                foreach (var item in BotMain.groups)
+                                if (DateTimeOffset.Parse(recentScores[q].date) > BotMain.osuUserTGs[i].lastCheckedScore)
                                 {
-                                    if (item.notifyOsu)
-                                    {
-                                        BotMain.bot.SendTextMessageAsync(item.id, $"<b><u>{BotMain.osuUserTGs[i].name}</u></b> недавно прошел данную карту, набрав <i>{curpp:N0}pp</i>!\n" +
-                                            $"<b>({recentScores[j].rank})</b> <a href=\"https://osu.ppy.sh/beatmaps/{beatmap.beatmap_id}\">{beatmap.title} [{beatmap.version}]</a> <b>{osuApi.GetBeatmapByBeatmapIdAsync(int.Parse(beatmap.beatmap_id)).Result.GetApproved()}</b>\n" +
-                                            $"{recentScores[j].count300}-{recentScores[j].count100}-{recentScores[j].count50}-{recentScores[j].countmiss}x❌ - <b><i>{accuracy:N2}%</i></b>\n" +
-                                            $"<b>{mods}</b> <i>{recentScores[j].maxcombo}/{beatmap.max_combo}</i> <b><u>{curpp:N0}pp</u></b> (<b><u>{ifFCpp:N0}pp</u></b> if FC)\n" +
-                                            $"{DateTimeOffset.Parse(recentScores[j].date).AddHours(5):dd.MM.yyyy hh:mm}", ParseMode.Html, disableNotification: true).Wait();
-                                        BotMain.osuUserTGs[i].lastCheckedScore = DateTimeOffset.Parse(recentScores[j].date);
-                                    }
+                                    start = q;
+                                    startgot = true;
+                                    break;
                                 }
                             }
+                            //Console.WriteLine($"[Timer] get start var ({osuUserTGs[i].name})");
+                            if (!startgot) continue;
+                            for (int j = start; j >= 0; j--)
+                            {
+                                double accuracy = (50 * double.Parse(recentScores[j].count50) + 100 * double.Parse(recentScores[j].count100) + 300 * double.Parse(recentScores[j].count300)) / (300 * (double.Parse(recentScores[j].countmiss) + double.Parse(recentScores[j].count50) + double.Parse(recentScores[j].count100) + double.Parse(recentScores[j].count300))) * 100;
+                                Beatmap beatmap = osuApi.GetBeatmapByBeatmapIdAsync(int.Parse(recentScores[j].beatmap_id)).Result;
+                                if (beatmap == null) continue;
+                                //Console.WriteLine($"[Timer] getting pp ({osuUserTGs[i].name})");
+                                double curpp = Other.ppCalc(beatmap, accuracy, (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods)), int.Parse(recentScores[j].countmiss), int.Parse(recentScores[j].maxcombo));
+                                double ifFCpp = Other.ppCalc(beatmap, accuracy, (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods)), 0, int.Parse(beatmap.max_combo));
+                                //Console.WriteLine($"[Timer] got pp ({osuUserTGs[i].name})");
+                                //Console.WriteLine($"{osuUserTGs[i].name} {curpp} {ifFCpp}");
+                                Mods mods = (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods));
+                                if (curpp > 200 && recentScores[j].rank != "F")
+                                {
 
+                                    foreach (var item in BotMain.groups)
+                                    {
+                                        if (item.notifyOsu)
+                                        {
+                                            BotMain.bot.SendTextMessageAsync(item.id, $"<b><u>{BotMain.osuUserTGs[i].name}</u></b> недавно прошел данную карту, набрав <i>{curpp:N0}pp</i>!\n" +
+                                                $"<b>({recentScores[j].rank})</b> <a href=\"https://osu.ppy.sh/beatmaps/{beatmap.beatmap_id}\">{beatmap.title} [{beatmap.version}]</a> <b>{osuApi.GetBeatmapByBeatmapIdAsync(int.Parse(beatmap.beatmap_id)).Result.GetApproved()}</b>\n" +
+                                                $"{recentScores[j].count300}-{recentScores[j].count100}-{recentScores[j].count50}-{recentScores[j].countmiss}x❌ - <b><i>{accuracy:N2}%</i></b>\n" +
+                                                $"<b>{mods}</b> <i>{recentScores[j].maxcombo}/{beatmap.max_combo}</i> <b><u>{curpp:N0}pp</u></b> (<b><u>{ifFCpp:N0}pp</u></b> if FC)\n" +
+                                                $"{DateTimeOffset.Parse(recentScores[j].date).AddHours(5):dd.MM.yyyy HH:mm}", ParseMode.Html, disableNotification: true).Wait();
+                                        }
+                                    }
+                                }
+                                BotMain.osuUserTGs[i].lastCheckedScore = DateTimeOffset.Parse(recentScores[j].date);
+                            }
                         }
+
                     }
-
+                    catch (Exception ex)
+                    {
+                        Other.OnReceivedError(ex, null, "");
+                    }
+                    //Console.WriteLine("[Timer] end of timer");
                 }
-                catch (Exception ex)
-                {
-                    Other.OnReceivedError(ex, null, "");
-                }
-                //Console.WriteLine("[Timer] end of timer");
-            }
-
+            });
         }
         public static async void scores(Message mess)
         {

@@ -56,7 +56,7 @@ namespace tgbot_final.Bot
         public void OnEvents()
         {
             bot.OnMessage += Bot_OnMessage;
-            new Thread(OsuFuncs.notifyFunc).Start();
+            OsuFuncs.notifyFunc();
         }
         private void Bot_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
