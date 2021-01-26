@@ -16,6 +16,7 @@ namespace tgbot_final.Bot
     {
         public static TelegramBotClient bot { get; set; }
         public static long creatorId = 728384906;
+        public static string botUsername { get; set; }
         public static List<OsuUserTG> osuUserTGs = new List<OsuUserTG>();
         public static List<User> users = new List<User>();
         public static List<Group> groups = new List<Group>();
@@ -45,6 +46,7 @@ namespace tgbot_final.Bot
             SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
             Other.getInfo();
             bot = new TelegramBotClient(token);
+            botUsername = "@"+bot.GetMeAsync().Result.Username.ToLower();
             bot.GetUpdatesAsync(-1);
             bot.StartReceiving();
             OnEvents();

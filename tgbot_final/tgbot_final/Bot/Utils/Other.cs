@@ -45,7 +45,7 @@ namespace tgbot_final.Bot.Utils
         }
         public static void CheckMessage(Message message)
         {
-
+            message.Text = message.Text.Replace(BotMain.botUsername, "");
             if (message.Text.StartsWith("/"))
             {
                 if (message.Text.StartsWith("/start")) Tools.start(message);
@@ -75,12 +75,12 @@ namespace tgbot_final.Bot.Utils
                 else if (message.Text.StartsWith("!score")) OsuFuncs.scores(message);
 
                 else if (message.Text.StartsWith("!roll")) Tools.random(message);
-                else if (message.Text == "!flip") Tools.flip(message);
-                else if (message.Text == "!б") Tools.balance(message);
-                else if (message.Text == "!топ") Tools.top(message);
+                else if (message.Text.StartsWith("!flip")) Tools.flip(message);
+                else if (message.Text.StartsWith("!баланс")) Tools.balance(message);
+                else if (message.Text.StartsWith("!топ")) Tools.top(message);
 
                 else if (message.Text.StartsWith("!банд")) Games.bandit(message);
-                else if (message.Text == "!бонус") Tools.bonusBalance(message);
+                else if (message.Text.StartsWith("!бонус")) Tools.bonusBalance(message);
 
             }
         }
