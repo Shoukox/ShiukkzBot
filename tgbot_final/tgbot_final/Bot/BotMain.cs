@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Timers;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using tgbot_final.Bot.Logs;
 using tgbot_final.Bot.Types;
 using tgbot_final.Bot.Utils;
 using Group = tgbot_final.Bot.Types.Group;
@@ -20,6 +19,8 @@ namespace tgbot_final.Bot
         public static List<OsuUserTG> osuUserTGs = new List<OsuUserTG>();
         public static List<User> users = new List<User>();
         public static List<Group> groups = new List<Group>();
+        public static Dictionary<string, string> commands = new Dictionary<string, string>() { { "/anime", "rating:s" }, { "/loli", "loli" }, { "/ecchi", "rating:q" },
+                                                            { "/yuri", "yuri" }, { "/hentai","rating:e" }, {"/uncensored", "uncensored"}, {"/neko", "cat_ears"},{ "/wallpaper", "wallpaper"} };
         public static string osuToken = "67368ae869a6b45f012b6a7a8536ee65226ad257";
         [DllImport("Kernel32")]
         public static extern bool SetConsoleCtrlHandler(HandlerRoutine Handler, bool Add);
@@ -49,9 +50,6 @@ namespace tgbot_final.Bot
             OnEvents();
             Console.ReadLine();
             bot.StopReceiving();
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("bot stopped working.");
-            Console.ResetColor();
         }
         public void OnEvents()
         {
@@ -64,7 +62,7 @@ namespace tgbot_final.Bot
             if (message.Text != null)
             {
                 message.Text = message.Text.ToLower();
-                Other.ConsoleOutput(message);
+                LogsLevels.LogMessage(message.Chat.Title, message.From.Username, message.Text);
                 Other.CheckUser(message);
                 Other.CheckMessage(message);
             }

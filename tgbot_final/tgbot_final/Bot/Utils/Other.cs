@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Telegram.Bot.Types;
+using tgbot_final.Bot.Logs;
 using tgbot_final.Bot.Types;
 
 namespace tgbot_final.Bot.Utils
@@ -42,18 +43,9 @@ namespace tgbot_final.Bot.Utils
             if (BotMain.users.FirstOrDefault(m => m.id == message.From.Id) == default) BotMain.users.Add(new Types.User { id = message.From.Id, balance = 1000 });
             if (BotMain.groups.FirstOrDefault(m => m.id == message.Chat.Id) == default && message.From.Id != message.Chat.Id) BotMain.groups.Add(new Types.Group { id = message.Chat.Id });
         }
-        public static void ConsoleOutput(Message message)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"[{message.Date}] ");
-            Console.ResetColor();
-            Console.Write($"{message.From.FirstName} {message.From.Username} {message.Chat.Title}");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine(message.Text);
-            Console.ResetColor();
-        }
         public static void CheckMessage(Message message)
         {
+
             if (message.Text.StartsWith("/"))
             {
                 if (message.Text.StartsWith("/start")) Tools.start(message);
@@ -61,6 +53,9 @@ namespace tgbot_final.Bot.Utils
                 else if (message.Text.StartsWith("/sub")) Tools.subscribe(message);
                 else if (message.Text.StartsWith("/list")) Tools.getListOsuTG(message);
                 else if (message.Text.StartsWith("/rep")) Tools.report(message);
+
+                else if (BotMain.commands.ContainsKey(message.Text)) Pictures.SendPicture(message, BotMain.commands[message.Text]);
+
                 else if (message.From.Id == BotMain.creatorId)
                 {
                     if (message.Text.StartsWith("/del")) AdminOnly.deleteMessage(message);
@@ -80,12 +75,12 @@ namespace tgbot_final.Bot.Utils
                 else if (message.Text.StartsWith("!score")) OsuFuncs.scores(message);
 
                 else if (message.Text.StartsWith("!roll")) Tools.random(message);
-                else if (message.Text.StartsWith("!flip")) Tools.flip(message);
-                else if (message.Text.StartsWith("!б")) Tools.balance(message);
-                else if (message.Text.StartsWith("!топ")) Tools.top(message);
+                else if (message.Text == "!flip") Tools.flip(message);
+                else if (message.Text == "!б") Tools.balance(message);
+                else if (message.Text == "!топ") Tools.top(message);
 
                 else if (message.Text.StartsWith("!банд")) Games.bandit(message);
-                else if (message.Text.StartsWith("!бонус")) Tools.bonusBalance(message);
+                else if (message.Text == "!бонус") Tools.bonusBalance(message);
 
             }
         }
@@ -93,9 +88,7 @@ namespace tgbot_final.Bot.Utils
         {
             try
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.ToString());
-                Console.ResetColor();
+                LogsLevels.LogError(e.ToString());
                 await BotMain.bot.SendTextMessageAsync(BotMain.creatorId, e.ToString());
                 if (sendtext != "")
                 {

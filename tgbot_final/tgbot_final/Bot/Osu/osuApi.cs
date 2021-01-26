@@ -126,7 +126,7 @@ namespace tgbot_final.Bot.Osu
                     string doc = wc.DownloadString($"https://osu.ppy.sh/api/get_beatmaps?k={token}&b={beatmap_id}&mods={mods}");
                     if (doc.Length == 2) return null;
                     var data = JsonConvert.DeserializeObject<Beatmap[]>(doc)[0];
-                    if (mods >= 576 || mods >= 64) data.bpm = (double.Parse(data.bpm) * 1.5).ToString(); 
+                    if (mods >= 576 || mods >= 64) data.bpm = (double.Parse(data.bpm) * 1.5).ToString();
                     return data;
                 }
             });

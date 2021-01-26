@@ -192,6 +192,6 @@ namespace tgbot_final.Bot.Utils
                 Other.OnReceivedError(e, mess);
             }
         }
-            
+
     }
 }

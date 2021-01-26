@@ -18,20 +18,16 @@ namespace tgbot_final.Bot.Utils
     {
         public static async void notifyFunc()
         {
-            await Task.Run(() =>
+            while (true)
             {
-                while (true)
+                await Task.Run(() =>
                 {
                     try
                     {
-                        //Console.WriteLine($"isTimerWorking: {BotMain.isTimerWorking}");
-                        //Console.WriteLine("timed");
                         for (int i = 0; i <= BotMain.osuUserTGs.Count - 1; i++)
                         {
-                            //Console.WriteLine($"[Timer] {BotMain.osuUserTGs[i].name}");
                             osuApi osuApi = new osuApi(BotMain.osuToken);
                             Score[] recentScores = osuApi.GetRecentScoresByNameAsync(BotMain.osuUserTGs[i].name, 100).Result;
-                            //Console.WriteLine($"[Timer] osuApi + recentscores ({osuUserTGs[i].name})");
                             if (recentScores == null)
                             {
                                 continue;
@@ -47,18 +43,14 @@ namespace tgbot_final.Bot.Utils
                                     break;
                                 }
                             }
-                            //Console.WriteLine($"[Timer] get start var ({osuUserTGs[i].name})");
                             if (!startgot) continue;
                             for (int j = start; j >= 0; j--)
                             {
                                 double accuracy = (50 * double.Parse(recentScores[j].count50) + 100 * double.Parse(recentScores[j].count100) + 300 * double.Parse(recentScores[j].count300)) / (300 * (double.Parse(recentScores[j].countmiss) + double.Parse(recentScores[j].count50) + double.Parse(recentScores[j].count100) + double.Parse(recentScores[j].count300))) * 100;
                                 Beatmap beatmap = osuApi.GetBeatmapByBeatmapIdAsync(int.Parse(recentScores[j].beatmap_id)).Result;
                                 if (beatmap == null) continue;
-                                //Console.WriteLine($"[Timer] getting pp ({osuUserTGs[i].name})");
                                 double curpp = Other.ppCalc(beatmap, accuracy, (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods)), int.Parse(recentScores[j].countmiss), int.Parse(recentScores[j].maxcombo));
                                 double ifFCpp = Other.ppCalc(beatmap, accuracy, (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods)), 0, int.Parse(beatmap.max_combo));
-                                //Console.WriteLine($"[Timer] got pp ({osuUserTGs[i].name})");
-                                //Console.WriteLine($"{osuUserTGs[i].name} {curpp} {ifFCpp}");
                                 Mods mods = (Mods)osuApi.CalculateModsMods(int.Parse(recentScores[j].enabled_mods));
                                 if (curpp > 200 && recentScores[j].rank != "F")
                                 {
@@ -84,9 +76,8 @@ namespace tgbot_final.Bot.Utils
                     {
                         Other.OnReceivedError(ex, null, "");
                     }
-                    //Console.WriteLine("[Timer] end of timer");
-                }
-            });
+                });
+            }
         }
         public static async void scores(Message mess)
         {

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using tgbot_final.Bot.Osu;
 using tgbot_final.Bot.Osu.Types;
-using tgbot_final.Bot.Osu.Enums;
 
 namespace tgbot_final.Bot.Utils
 {
