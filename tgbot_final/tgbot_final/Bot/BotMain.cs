@@ -20,7 +20,7 @@ namespace tgbot_final.Bot
         public static List<OsuUserTG> osuUserTGs = new List<OsuUserTG>();
         public static List<User> users = new List<User>();
         public static List<Group> groups = new List<Group>();
-        public static Dictionary<string, string> commands = new Dictionary<string, string>() { { "/anime", "rating:s" }, { "/loli", "loli" }, { "/ecchi", "rating:q" },
+        public static Dictionary<string, string> commands = new Dictionary<string, string>() { { "/anime", "rating:s" }, { "/ecchi", "rating:q" },
                                                             { "/yuri", "yuri" }, { "/hentai","rating:e" }, {"/uncensored", "uncensored"}, {"/neko", "cat_ears"},{ "/wallpaper", "wallpaper"} };
         public static string osuToken = "67368ae869a6b45f012b6a7a8536ee65226ad257";
         [DllImport("Kernel32")]
